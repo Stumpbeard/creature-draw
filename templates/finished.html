@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="/static/style.css">
+
+<body>
+    <svg width="0" height="0" style="position:absolute;z-index:-1;">
+        <defs>
+            <filter id="remove-alpha" x="0" y="0" width="100%" height="100%">
+                <feComponentTransfer>
+                    <feFuncA type="discrete" tableValues="0 1"></feFuncA>
+                </feComponentTransfer>
+            </filter>
+        </defs>
+    </svg>
+    <div>
+        <h1><a href="/">Creatures</a></h1>
+        <h2>{{ creature.name }}</h2>
+        <canvas id="drawing-canvas" height="800" width="500"></canvas>
+        <span id="head" style="display: none;">{{ head_data }}</span>
+        <span id="body" style="display: none;">{{ body_data }}</span>
+        <span id="legs" style="display: none;">{{ legs_data }}</span>
+    </div>
+    <script src="/static/finished.js"></script>
+</body>

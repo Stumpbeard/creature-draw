@@ -1,0 +1,29 @@
+/* html {
+    box-sizing: border-box;
+}
+
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+} */
+
+canvas {
+    background: #ddd;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+/* div {
+    width: fit-content;
+}
+
+.columns {
+    display: flex;
+    flex-flow: row nowrap;
+} */

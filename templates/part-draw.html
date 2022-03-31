@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="/static/style.css">
+
+<body>
+    <svg width="0" height="0" style="position:absolute;z-index:-1;">
+        <defs>
+            <filter id="remove-alpha" x="0" y="0" width="100%" height="100%">
+                <feComponentTransfer>
+                    <feFuncA type="discrete" tableValues="0 1"></feFuncA>
+                </feComponentTransfer>
+            </filter>
+        </defs>
+    </svg>
+    <div>
+        <h1><a href="/">Creatures</a></h1>
+        <canvas id="drawing-canvas" height="300" width="500">{{ part_data }}</canvas>
+        <div id="color-selector">
+            <input type="radio" name="color" id="green" value="green" checked>
+            <label for="green">Green</label>
+            <input type="radio" name="color" id="red" value="red">
+            <label for="red">Red</label>
+            <input type="radio" name="color" id="blue" value="blue">
+            <label for="blue">Blue</label>
+        </div>
+        <div id="tool-selector">
+            <input type="radio" name="tool" id="stroke" value="stroke" checked>
+            <label for="stroke"> Stroke</label>
+            <input type="radio" name="tool" id="fill" value="fill">
+            <label for="fill"> Fill</label>
+        </div>
+        <form action="/update-creature/" method="post">
+            <input type="text" placeholder="Name" name="name" id="monster-name" value="{{ creature.name }}" required
+                disabled>
+            <input type="text" name="section" value="{{ part }}" hidden>
+            <input type="text" name="creature_id" value="{{ creature.id }}" hidden>
+            <input type="text" name="image" id="image-input" hidden>
+            <input type="submit" id="done-button" value="Done">
+        </form>
+    </div>
+    <script src="/static/index.js"></script>
+</body>
