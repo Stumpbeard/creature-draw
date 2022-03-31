@@ -1,16 +1,24 @@
 const canvas = document.getElementById("drawing-canvas")
-const offsetX = canvas.offsetLeft
-const offsetY = canvas.offsetTop
+const buffer = document.createElement('canvas')
+buffer.width = canvas.width
+buffer.height = canvas.height
+const offsetX = canvas.offsetLeft + parseInt(getComputedStyle(canvas).borderWidth.replace("px", ""))
+const offsetY = canvas.offsetTop + parseInt(getComputedStyle(canvas).borderWidth.replace("px", ""))
 
 const imageInput = document.getElementById("image-input")
 const monsterName = document.getElementById("monster-name")
+
+let mousePos = {
+    x: -1000,
+    y: -1000,
+}
 
 let mousedown = false
 let lines = []
 let points = []
 let actions = []
 
-const ctx = canvas.getContext("2d")
+let ctx = canvas.getContext("2d")
 ctx.imageSmoothingEnabled = false
 ctx.filter = 'url(#remove-alpha)';
 
@@ -69,6 +77,12 @@ const fill = (data, x, y, oldColor, newColor) => {
 }
 
 function draw() {
+    ctx = canvas.getContext("2d")
+    ctx.imageSmoothingEnabled = false
+    ctx.filter = 'url(#remove-alpha)';
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.drawImage(buffer, 0, 0)
     if (canvas.innerHTML) {
         const imageData = JSON.parse(canvas.innerHTML.replaceAll('"', ''))
         canvas.innerHTML = ''
@@ -83,7 +97,9 @@ function draw() {
         if (action.action === 'stroke') {
             const line = action
             ctx.strokeStyle = line.color;
-            ctx.lineWidth = 5;
+            ctx.lineWidth = parseInt(line.size);
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
             if (line.points.length !== 0) {
                 ctx.beginPath();
                 ctx.setLineDash([]);
@@ -114,7 +130,9 @@ function draw() {
     actions = []
 
     ctx.strokeStyle = document.querySelector('input[name="color"]:checked').value;
-    ctx.lineWidth = 5;
+    ctx.lineWidth = parseInt(document.querySelector('input[name="size"]').value);
+    ctx.lineCap = 'round'
+    ctx.lineJoin = 'round';
     if (points.length !== 0) {
         ctx.beginPath();
         ctx.setLineDash([]);
@@ -130,6 +148,20 @@ function draw() {
     const imageData = Array.prototype.slice.call(image.data)
     const imageDataJson = JSON.stringify(imageData)
     imageInput.value = imageDataJson;
+
+    ctx = buffer.getContext('2d')
+    ctx.imageSmoothingEnabled = false
+    ctx.filter = 'url(#remove-alpha)';
+    ctx.drawImage(canvas, 0, 0)
+
+    ctx = canvas.getContext("2d")
+    ctx.imageSmoothingEnabled = false
+    ctx.filter = 'url(#remove-alpha)';
+    ctx.beginPath()
+    ctx.fillStyle = document.querySelector('input[name="color"]:checked').value;
+    ctx.arc(mousePos.x, mousePos.y, parseInt(document.querySelector('input[name="size"]').value) / 2, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.closePath()
 }
 
 setInterval(draw, 16.6666)
@@ -137,27 +169,26 @@ setInterval(draw, 16.6666)
 
 canvas.addEventListener("mousedown", (e) => {
     if (e.button === 0) {
-        const tool = document.querySelector('input[name="tool"]:checked').value
-        if (tool === 'stroke') {
-            console.log(e)
-            mousedown = true
-            points.push({ x: e.pageX - offsetX, y: e.pageY - offsetY })
-            points.push({ x: e.pageX - offsetX + 1, y: e.pageY - offsetY + 1 })
-        } else if (tool === 'fill') {
-            actions.push({ "action": "fill", "x": e.pageX - offsetX, "y": e.pageY - offsetY, "color": document.querySelector('input[name="color"]:checked').value })
-        }
+        // const tool = document.querySelector('input[name="tool"]:checked').value
+        // if (tool === 'stroke') {
+        mousedown = true
+        points.push({ x: e.pageX - offsetX, y: e.pageY - offsetY })
+        points.push({ x: e.pageX - offsetX + 1, y: e.pageY - offsetY + 1 })
+        // } else if (tool === 'fill') {
+        //     actions.push({ "action": "fill", "x": e.pageX - offsetX, "y": e.pageY - offsetY, "color": document.querySelector('input[name="color"]:checked').value })
+        // }
     }
 }, false)
 
 document.addEventListener("mouseup", (e) => {
     if (e.button === 0) {
-        const tool = document.querySelector('input[name="tool"]:checked').value
+        // const tool = document.querySelector('input[name="tool"]:checked').value
         mousedown = false
-        if (tool === 'stroke') {
-            mousedown = false
-            actions.push({ "action": "stroke", "color": document.querySelector('input[name="color"]:checked').value, "points": points })
-            points = []
-        }
+        // if (tool === 'stroke') {
+        mousedown = false
+        actions.push({ "action": "stroke", "color": document.querySelector('input[name="color"]:checked').value, "points": points, "size": document.querySelector('input[name="size"]').value })
+        points = []
+        // }
     }
 }, false)
 
@@ -165,4 +196,5 @@ document.addEventListener("mousemove", (e) => {
     if (mousedown) {
         points.push({ x: e.pageX - offsetX, y: e.pageY - offsetY })
     }
+    mousePos = { x: e.pageX - offsetX, y: e.pageY - offsetY }
 }, false)

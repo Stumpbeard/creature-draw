@@ -15,18 +15,29 @@
         <h1><a href="/">Creatures</a></h1>
         <canvas id="drawing-canvas" height="300" width="500"></canvas>
         <div id="color-selector">
-            <input type="radio" name="color" id="green" value="green" checked>
-            <label for="green">Green</label>
-            <input type="radio" name="color" id="red" value="red">
-            <label for="red">Red</label>
-            <input type="radio" name="color" id="blue" value="blue">
-            <label for="blue">Blue</label>
+            <input type="radio" name="color" id="#000000" value="#000000" checked>
+            <label class="color-selector-option" for="#000000">&nbsp;</label>
+            <input type="radio" name="color" id="#55415f" value="#55415f">
+            <label class="color-selector-option" for="#55415f">&nbsp;</label>
+            <input type="radio" name="color" id="#646964" value="#646964">
+            <label class="color-selector-option" for="#646964">&nbsp;</label>
+            <input type="radio" name="color" id="#d77355" value="#d77355">
+            <label class="color-selector-option" for="#d77355">&nbsp;</label>
+            <input type="radio" name="color" id="#508cd7" value="#508cd7">
+            <label class="color-selector-option" for="#508cd7">&nbsp;</label>
+            <input type="radio" name="color" id="#64b964" value="#64b964">
+            <label class="color-selector-option" for="#64b964">&nbsp;</label>
+            <input type="radio" name="color" id="#e6c86e" value="#e6c86e">
+            <label class="color-selector-option" for="#e6c86e">&nbsp;</label>
+            <input type="radio" name="color" id="#dcf5ff" value="#dcf5ff">
+            <label class="color-selector-option" for="#dcf5ff">&nbsp;</label>
         </div>
         <div id="tool-selector">
-            <input type="radio" name="tool" id="stroke" value="stroke" checked>
+            <!-- <input type="radio" name="tool" id="stroke" value="stroke" checked>
             <label for="stroke"> Stroke</label>
             <input type="radio" name="tool" id="fill" value="fill">
-            <label for="fill"> Fill</label>
+            <label for="fill"> Fill</label> -->
+            <input name="size" type="range" min="1" max="100">
         </div>
         <form action="/new-creature/" method="post">
             <input type="text" placeholder="Name" name="name" id="monster-name" required>
