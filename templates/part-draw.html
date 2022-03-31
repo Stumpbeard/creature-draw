@@ -42,9 +42,9 @@
         <form action="/update-creature/" method="post">
             <input type="text" placeholder="Name" name="name" id="monster-name" value="{{ creature.name }}" required
                 disabled>
-            <input type="text" name="section" value="{{ part }}" hidden>
-            <input type="text" name="creature_id" value="{{ creature.id }}" hidden>
-            <input type="text" name="image" id="image-input" hidden>
+            <input type="hidden" name="section" value="{{ part }}">
+            <input type="hidden" name="creature_id" value="{{ creature.id }}">
+            <input type="hidden" name="image" id="image-input">
             <input type="submit" id="done-button" value="Done">
         </form>
     </div>
