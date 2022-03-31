@@ -6,12 +6,14 @@ name = "pypi"
 [packages]
 flask = "*"
 flask-sqlalchemy = "*"
+gunicorn = "*"
 
 [dev-packages]
 black = "*"
+ipython = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.10"
 
 [pipenv]
 allow_prereleases = true
