@@ -22,6 +22,19 @@ let ctx = canvas.getContext("2d")
 ctx.imageSmoothingEnabled = false
 ctx.filter = 'url(#remove-alpha)';
 
+function sameColor(c1, c2) {
+    return (c1.r === c2.r && c1.g === c2.g && c1.b === c2.b)
+}
+
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
 const fillStack = []
 const fill = (data, x, y, oldColor, newColor) => {
     fillStack.push([x, y, oldColor, newColor])
@@ -29,36 +42,15 @@ const fill = (data, x, y, oldColor, newColor) => {
     while (fillStack.length > 0) {
         let [x, y, oldColor, newColor] = fillStack.pop()
         const loc = (x + y * canvas.width) * 4
-        let color = ''
-        if (data[loc] === 255) {
-            color = 'red'
-        } else if (data[loc + 1] === 128) {
-            color = 'green'
-        } else if (data[loc + 2] === 255) {
-            color = 'blue'
-        }
-        if (color === newColor) {
+        let color = { r: data[loc], g: data[loc + 1], b: data[loc + 2] }
+        if (sameColor(color, newColor)) {
             continue
         }
-        if (color === oldColor) {
-            if (newColor === 'red') {
-                data[loc] = 255
-                data[loc + 1] = 0
-                data[loc + 2] = 0
-                data[loc + 3] = 255
-            }
-            else if (newColor === 'green') {
-                data[loc] = 0
-                data[loc + 1] = 128
-                data[loc + 2] = 0
-                data[loc + 3] = 255
-            }
-            else if (newColor === 'blue') {
-                data[loc] = 0
-                data[loc + 1] = 0
-                data[loc + 2] = 255
-                data[loc + 3] = 255
-            }
+        if (sameColor(color, oldColor)) {
+            data[loc] = newColor.r
+            data[loc + 1] = newColor.g
+            data[loc + 2] = newColor.b
+            data[loc + 3] = 255
 
             if (y - 1 >= 0) {
                 fillStack.push([x, y - 1, oldColor, newColor])
@@ -115,14 +107,7 @@ function draw() {
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
             const data = imageData.data
             const loc = (action.x + action.y * canvas.width) * 4
-            let color = ''
-            if (data[loc] === 255) {
-                color = 'red'
-            } else if (data[loc + 1] === 128) {
-                color = 'green'
-            } else if (data[loc + 2] === 255) {
-                color = 'blue'
-            }
+            let color = { r: data[loc], g: data[loc + 1], b: data[loc + 2] }
             fill(data, action.x, action.y, color, action.color)
             ctx.putImageData(imageData, 0, 0);
         }
@@ -169,21 +154,21 @@ setInterval(draw, 16.6666)
 
 canvas.addEventListener("mousedown", (e) => {
     if (e.button === 0) {
-        // const tool = document.querySelector('input[name="tool"]:checked').value
+        // const tool = document.querySelector('input[name="tool"]:checked').value | 'stroke'
         // if (tool === 'stroke') {
         mousedown = true
         points.push({ x: e.pageX - offsetX, y: e.pageY - offsetY })
         points.push({ x: e.pageX - offsetX + 1, y: e.pageY - offsetY + 1 })
         // } else if (tool === 'fill') {
-        //     actions.push({ "action": "fill", "x": e.pageX - offsetX, "y": e.pageY - offsetY, "color": document.querySelector('input[name="color"]:checked').value })
+        // actions.push({ "action": "fill", "x": e.pageX - offsetX, "y": e.pageY - offsetY, "color": hexToRgb(document.querySelector('input[name="color"]:checked').value) })
         // }
     }
 }, false)
 
 document.addEventListener("mouseup", (e) => {
     if (e.button === 0) {
-        // const tool = document.querySelector('input[name="tool"]:checked').value
-        mousedown = false
+        // const tool = document.querySelector('input[name="tool"]:checked').value | 'stroke'
+        // mousedown = false
         // if (tool === 'stroke') {
         mousedown = false
         actions.push({ "action": "stroke", "color": document.querySelector('input[name="color"]:checked').value, "points": points, "size": document.querySelector('input[name="size"]').value })

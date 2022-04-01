@@ -13,7 +13,22 @@
     </svg>
     <div>
         <h1><a href="/">Creatures</a></h1>
-        <canvas id="drawing-canvas" height="300" width="500"></canvas>
+        <p>
+            Start drawing a creature and name it.
+        </p>
+        <p>
+            Anything past the arrow will be visible to the next person.
+        </p>
+        <p>
+            Click a name below to continue someone else's creature.
+        </p>
+        <div class="columns">
+            <canvas id="drawing-canvas" height="300" width="500"></canvas>
+            <div style="height:260px; width:500px;position:relative;">
+                <span style="position:absolute;bottom:0;left:16px;">
+                    <-- draw past here!</span>
+            </div>
+        </div>
         <div id="color-selector">
             <input type="radio" name="color" id="#000000" value="#000000" checked>
             <label class="color-selector-option" for="#000000">&nbsp;</label>
@@ -52,10 +67,10 @@
         <div id="tool-selector">
             <input name="size" type="range" min="1" max="100">
             <br>
-            <input type="radio" name="tool" id="stroke" value="stroke" checked>
+            <!-- <input type="radio" name="tool" id="stroke" value="stroke" checked>
             <label for="stroke"> Stroke</label>
             <input type="radio" name="tool" id="fill" value="fill">
-            <label for="fill"> Fill</label>
+            <label for="fill"> Fill</label> -->
         </div>
         <form action="/new-creature/" method="post">
             <input type="text" placeholder="Name" name="name" id="monster-name" required>
@@ -66,13 +81,15 @@
         <h2>Needs body</h2>
         <ul>
             {% for creature in needing_bodies %}
-            <li><a href="{{ url_for('add_part', creature_id=creature.id, part='body') }}">{{ creature.name }}</a></li>
+            <li><a href="{{ url_for('add_part', creature_id=creature.id, part='body') }}">{{ creature.name }}</a>
+            </li>
             {% endfor %}
         </ul>
         <h2>Needs legs</h2>
         <ul>
             {% for creature in needing_legs %}
-            <li><a href="{{ url_for('add_part', creature_id=creature.id, part='legs') }}">{{ creature.name }}</a></li>
+            <li><a href="{{ url_for('add_part', creature_id=creature.id, part='legs') }}">{{ creature.name }}</a>
+            </li>
             {% endfor %}
         </ul>
         <h2>Finished</h2>

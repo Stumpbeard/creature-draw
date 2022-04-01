@@ -44,6 +44,11 @@ canvas {
     flex-flow: row nowrap;
 } */
 
+.columns {
+    display: flex;
+    flex-flow: row nowrap;
+}
+
 input[type=radio][name=color] {
     display: none;
 }
