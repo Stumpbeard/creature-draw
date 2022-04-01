@@ -45,34 +45,34 @@ input[type=radio]:checked + label {
     box-shadow: 0px 0px 2px 2px yellow;
 }
 
-[for="#000000"] {
-    background-color: #000000;
+[for="#140c1c"] {
+    background-color: #140c1c;
 }
 
-[for="#55415f"] {
-    background-color: #55415f;
+[for="#442434"] {
+    background-color: #442434;
 }
 
-[for="#646964"] {
-    background-color: #646964;
+[for="#30346d"] {
+    background-color: #30346d;
 }
 
-[for="#d77355"] {
-    background-color: #d77355;
+[for="#4e4a4e"] {
+    background-color: #4e4a4e;
 }
 
-[for="#508cd7"] {
-    background-color: #508cd7;
+[for="#854c30"] {
+    background-color: #854c30;
 }
 
-[for="#64b964"] {
-    background-color: #64b964;
+[for="#346524"] {
+    background-color: #346524;
 }
 
-[for="#e6c86e"] {
-    background-color: #e6c86e;
+[for="#d04648"] {
+    background-color: #d04648;
 }
 
-[for="#dcf5ff"] {
-    background-color: #dcf5ff;
+[for="#757161"] {
+    background-color: #757161;
 }
