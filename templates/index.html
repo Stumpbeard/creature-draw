@@ -50,11 +50,12 @@
             <label class="color-selector-option" for="#FFCCAA">&nbsp;</label>
         </div>
         <div id="tool-selector">
-            <!-- <input type="radio" name="tool" id="stroke" value="stroke" checked>
+            <input name="size" type="range" min="1" max="100">
+            <br>
+            <input type="radio" name="tool" id="stroke" value="stroke" checked>
             <label for="stroke"> Stroke</label>
             <input type="radio" name="tool" id="fill" value="fill">
-            <label for="fill"> Fill</label> -->
-            <input name="size" type="range" min="1" max="100">
+            <label for="fill"> Fill</label>
         </div>
         <form action="/new-creature/" method="post">
             <input type="text" placeholder="Name" name="name" id="monster-name" required>

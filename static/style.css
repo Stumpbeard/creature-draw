@@ -44,7 +44,7 @@ canvas {
     flex-flow: row nowrap;
 } */
 
-input[type=radio] {
+input[type=radio][name=color] {
     display: none;
 }
 
@@ -59,7 +59,7 @@ input[type=radio] {
     margin: 6px;
 }
 
-input[type=radio]:checked + label {
+input[type=radio][name=color]:checked + label {
     box-shadow: 0px 0px 0px 4px #FF77A8;
 }
 
