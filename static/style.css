@@ -49,7 +49,7 @@ canvas {
     flex-flow: row nowrap;
 }
 
-input[type=radio][name=color] {
+.hidden-radio {
     display: none;
 }
 
@@ -64,7 +64,17 @@ input[type=radio][name=color] {
     margin: 6px;
 }
 
-input[type=radio][name=color]:checked + label {
+.size-selector-option {
+    border-radius: 100%;
+    display: inline-block;
+    vertical-align: text-top;
+    box-sizing: border-box;
+    margin: 6px;
+    vertical-align: middle;
+    background-color: #000000;
+}
+
+.hidden-radio:checked + label {
     box-shadow: 0px 0px 0px 4px #FF77A8;
 }
 
@@ -130,4 +140,39 @@ input[type=radio][name=color]:checked + label {
 
 [for="#FFCCAA"] {
     background-color: #FFCCAA;
+}
+
+[for="micro"] {
+    height: 2px;
+    width: 2px;
+}
+
+[for="xtra-small"] {
+    height: 4px;
+    width: 4px;
+}
+
+[for="small"] {
+    height: 8px;
+    width: 8px;
+}
+
+[for="medium"] {
+    height: 16px;
+    width: 16px;
+}
+
+[for="large"] {
+    height: 32px;
+    width: 32px;
+}
+
+[for="xtra-large"] {
+    height: 64px;
+    width: 64px;
+}
+
+[for="big-yoshi"] {
+    height: 128px;
+    width: 128px;
 }

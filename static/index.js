@@ -115,7 +115,7 @@ function draw() {
     actions = []
 
     ctx.strokeStyle = document.querySelector('input[name="color"]:checked').value;
-    ctx.lineWidth = parseInt(document.querySelector('input[name="size"]').value);
+    ctx.lineWidth = parseInt(document.querySelector('input[name="size"]:checked').value);
     ctx.lineCap = 'round'
     ctx.lineJoin = 'round';
     if (points.length !== 0) {
@@ -144,7 +144,7 @@ function draw() {
     ctx.filter = 'url(#remove-alpha)';
     ctx.beginPath()
     ctx.fillStyle = document.querySelector('input[name="color"]:checked').value;
-    ctx.arc(mousePos.x, mousePos.y, parseInt(document.querySelector('input[name="size"]').value) / 2, 0, Math.PI * 2)
+    ctx.arc(mousePos.x, mousePos.y, parseInt(document.querySelector('input[name="size"]:checked').value) / 2, 0, Math.PI * 2)
     ctx.fill()
     ctx.closePath()
 }
@@ -171,7 +171,7 @@ document.addEventListener("mouseup", (e) => {
         // mousedown = false
         // if (tool === 'stroke') {
         mousedown = false
-        actions.push({ "action": "stroke", "color": document.querySelector('input[name="color"]:checked').value, "points": points, "size": document.querySelector('input[name="size"]').value })
+        actions.push({ "action": "stroke", "color": document.querySelector('input[name="color"]:checked').value, "points": points, "size": parseInt(document.querySelector('input[name="size"]:checked').value) })
         points = []
         // }
     }
