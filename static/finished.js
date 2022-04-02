@@ -96,11 +96,9 @@ replayButton.addEventListener('click', () => {
     ctx.clearRect(0, 0, buffer.width, buffer.height);
     ctx = canvas.getContext('2d')
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    actions = JSON.parse(headHistory)
     headHistoryParsed = headHistory != 'None' ? JSON.parse(headHistory) : []
     bodyHistoryParsed = bodyHistory != 'None' ? JSON.parse(bodyHistory) : []
     legsHistoryParsed = legsHistory != 'None' ? JSON.parse(legsHistory) : []
-    actions = headHistoryParsed
     headHistoryParsed.forEach(action => {
         action.part = 'head'
     });
@@ -116,6 +114,7 @@ replayButton.addEventListener('click', () => {
             point.y += 500
         });
     });
+    actions = headHistoryParsed
     actions = actions.concat(bodyHistoryParsed)
     actions = actions.concat(legsHistoryParsed)
     drawIntervalId = setInterval(draw, 16.6666)
