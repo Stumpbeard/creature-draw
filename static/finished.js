@@ -7,13 +7,20 @@ const bodyHistory = document.getElementById('body-history').innerHTML.replaceAll
 const legsHistory = document.getElementById('legs-history').innerHTML.replaceAll('\\"', "'").replaceAll('"', '').replaceAll("'", '"')
 const replayButton = document.getElementById("replay-button")
 
-let ctx = canvas.getContext("2d")
+const buffer = document.createElement('canvas')
+buffer.width = canvas.width
+buffer.height = canvas.height
+let ctx = buffer.getContext("2d")
 ctx.imageSmoothingEnabled = false
 ctx.filter = 'url(#remove-alpha)';
 
-let headHistoryParsed = JSON.parse(headHistory)
-let bodyHistoryParsed = JSON.parse(bodyHistory)
-let legsHistoryParsed = JSON.parse(legsHistory)
+ctx = canvas.getContext("2d")
+ctx.imageSmoothingEnabled = false
+ctx.filter = 'url(#remove-alpha)';
+
+let headHistoryParsed = headHistory != 'None' ? JSON.parse(headHistory) : []
+let bodyHistoryParsed = bodyHistory != 'None' ? JSON.parse(bodyHistory) : []
+let legsHistoryParsed = legsHistory != 'None' ? JSON.parse(legsHistory) : []
 
 headHistoryParsed.forEach(action => {
     action.part = 'head'
@@ -36,7 +43,7 @@ actions = actions.concat(legsHistoryParsed)
 
 let mostRecentAction = 'head'
 function draw() {
-    ctx = canvas.getContext("2d")
+    ctx = buffer.getContext("2d")
     ctx.imageSmoothingEnabled = false
     ctx.filter = 'url(#remove-alpha)';
 
@@ -66,8 +73,17 @@ function draw() {
     }
     if (mostRecentAction === 'head') {
         ctx.clearRect(0, 300, canvas.width, canvas.height)
+        ctx = canvas.getContext('2d')
+        ctx.drawImage(buffer, 0, 0)
     } else if (mostRecentAction === 'body') {
         ctx.clearRect(0, 550, canvas.width, canvas.height)
+        ctx.clearRect(0, 0, canvas.width, 250)
+        ctx = canvas.getContext('2d')
+        ctx.drawImage(buffer, 0, 0)
+    } else if (mostRecentAction === 'legs') {
+        ctx.clearRect(0, 0, canvas.width, 500)
+        ctx = canvas.getContext('2d')
+        ctx.drawImage(buffer, 0, 0)
     }
 }
 
@@ -78,14 +94,21 @@ replayButton.addEventListener('click', () => {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     actions = JSON.parse(headHistory)
+    headHistoryParsed = JSON.parse(headHistory)
     bodyHistoryParsed = JSON.parse(bodyHistory)
     legsHistoryParsed = JSON.parse(legsHistory)
+    actions = headHistoryParsed
+    headHistoryParsed.forEach(action => {
+        action.part = 'head'
+    });
     bodyHistoryParsed.forEach(action => {
+        action.part = 'body'
         action.points.forEach(point => {
             point.y += 250
         });
     });
     legsHistoryParsed.forEach(action => {
+        action.part = 'legs'
         action.points.forEach(point => {
             point.y += 500
         });
@@ -94,3 +117,36 @@ replayButton.addEventListener('click', () => {
     actions = actions.concat(legsHistoryParsed)
     drawIntervalId = setInterval(draw, 16.6666)
 })
+
+if (headHistory == 'None') {
+    let imageData = JSON.parse(headData.innerHTML.replaceAll('"', ''))
+    headData.innerHTML = ''
+    let arr = new Uint8ClampedArray(600000)
+    for (let i = 0; i < arr.length; ++i) {
+        arr[i] = imageData[i]
+    }
+    let newImageData = new ImageData(arr, canvas.width)
+    ctx.putImageData(newImageData, 0, 0)
+}
+
+if (bodyHistory == 'None') {
+    let imageData = JSON.parse(bodyData.innerHTML.replaceAll('"', ''))
+    bodyData.innerHTML = ''
+    let arr = new Uint8ClampedArray(600000)
+    for (let i = 0; i < arr.length; ++i) {
+        arr[i] = imageData[i]
+    }
+    let newImageData = new ImageData(arr, canvas.width)
+    ctx.putImageData(newImageData, 0, 250)
+}
+
+if (legsHistory == 'None') {
+    let imageData = JSON.parse(legsData.innerHTML.replaceAll('"', ''))
+    legsData.innerHTML = ''
+    let arr = new Uint8ClampedArray(600000)
+    for (let i = 0; i < arr.length; ++i) {
+        arr[i] = imageData[i]
+    }
+    let newImageData = new ImageData(arr, canvas.width)
+    ctx.putImageData(newImageData, 0, 500)
+}
