@@ -92,11 +92,14 @@ var drawIntervalId = setInterval(draw, 16.6666)
 replayButton.addEventListener('click', () => {
     clearInterval(drawIntervalId)
 
+    ctx = buffer.getContext('2d')
+    ctx.clearRect(0, 0, buffer.width, buffer.height);
+    ctx = canvas.getContext('2d')
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     actions = JSON.parse(headHistory)
-    headHistoryParsed = JSON.parse(headHistory)
-    bodyHistoryParsed = JSON.parse(bodyHistory)
-    legsHistoryParsed = JSON.parse(legsHistory)
+    headHistoryParsed = headHistory != 'None' ? JSON.parse(headHistory) : []
+    bodyHistoryParsed = bodyHistory != 'None' ? JSON.parse(bodyHistory) : []
+    legsHistoryParsed = legsHistory != 'None' ? JSON.parse(legsHistory) : []
     actions = headHistoryParsed
     headHistoryParsed.forEach(action => {
         action.part = 'head'
@@ -116,11 +119,39 @@ replayButton.addEventListener('click', () => {
     actions = actions.concat(bodyHistoryParsed)
     actions = actions.concat(legsHistoryParsed)
     drawIntervalId = setInterval(draw, 16.6666)
+    if (headHistory == 'None') {
+        let imageData = JSON.parse(headData.innerHTML.replaceAll('"', ''))
+        let arr = new Uint8ClampedArray(600000)
+        for (let i = 0; i < arr.length; ++i) {
+            arr[i] = imageData[i]
+        }
+        let newImageData = new ImageData(arr, canvas.width)
+        ctx.putImageData(newImageData, 0, 0)
+    }
+
+    if (bodyHistory == 'None') {
+        let imageData = JSON.parse(bodyData.innerHTML.replaceAll('"', ''))
+        let arr = new Uint8ClampedArray(600000)
+        for (let i = 0; i < arr.length; ++i) {
+            arr[i] = imageData[i]
+        }
+        let newImageData = new ImageData(arr, canvas.width)
+        ctx.putImageData(newImageData, 0, 250)
+    }
+
+    if (legsHistory == 'None') {
+        let imageData = JSON.parse(legsData.innerHTML.replaceAll('"', ''))
+        let arr = new Uint8ClampedArray(600000)
+        for (let i = 0; i < arr.length; ++i) {
+            arr[i] = imageData[i]
+        }
+        let newImageData = new ImageData(arr, canvas.width)
+        ctx.putImageData(newImageData, 0, 500)
+    }
 })
 
 if (headHistory == 'None') {
     let imageData = JSON.parse(headData.innerHTML.replaceAll('"', ''))
-    headData.innerHTML = ''
     let arr = new Uint8ClampedArray(600000)
     for (let i = 0; i < arr.length; ++i) {
         arr[i] = imageData[i]
@@ -131,7 +162,6 @@ if (headHistory == 'None') {
 
 if (bodyHistory == 'None') {
     let imageData = JSON.parse(bodyData.innerHTML.replaceAll('"', ''))
-    bodyData.innerHTML = ''
     let arr = new Uint8ClampedArray(600000)
     for (let i = 0; i < arr.length; ++i) {
         arr[i] = imageData[i]
@@ -142,7 +172,6 @@ if (bodyHistory == 'None') {
 
 if (legsHistory == 'None') {
     let imageData = JSON.parse(legsData.innerHTML.replaceAll('"', ''))
-    legsData.innerHTML = ''
     let arr = new Uint8ClampedArray(600000)
     for (let i = 0; i < arr.length; ++i) {
         arr[i] = imageData[i]
