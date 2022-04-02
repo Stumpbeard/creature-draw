@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <link rel="stylesheet" href="/static/style.css">
 
+{% from 'macros.html' import drawing_area %}
+
 <body>
     <svg width="0" height="0" style="position:absolute;z-index:-1;">
         <defs>
@@ -22,56 +24,7 @@
         <p>
             Click a name below to continue someone else's creature.
         </p>
-        <div class="columns">
-            <canvas id="drawing-canvas" height="300" width="500"></canvas>
-            <div style="height:260px; width:500px;position:relative;">
-                <span style="position:absolute;bottom:0;left:16px;">
-                    <-- draw past here!</span>
-            </div>
-        </div>
-        <div id="color-selector">
-            <input type="radio" name="color" id="#000000" value="#000000" checked>
-            <label class="color-selector-option" for="#000000">&nbsp;</label>
-            <input type="radio" name="color" id="#1D2B53" value="#1D2B53">
-            <label class="color-selector-option" for="#1D2B53">&nbsp;</label>
-            <input type="radio" name="color" id="#7E2553" value="#7E2553">
-            <label class="color-selector-option" for="#7E2553">&nbsp;</label>
-            <input type="radio" name="color" id="#008751" value="#008751">
-            <label class="color-selector-option" for="#008751">&nbsp;</label>
-            <input type="radio" name="color" id="#AB5236" value="#AB5236">
-            <label class="color-selector-option" for="#AB5236">&nbsp;</label>
-            <input type="radio" name="color" id="#5F574F" value="#5F574F">
-            <label class="color-selector-option" for="#5F574F">&nbsp;</label>
-            <input type="radio" name="color" id="#C2C3C7" value="#C2C3C7">
-            <label class="color-selector-option" for="#C2C3C7">&nbsp;</label>
-            <input type="radio" name="color" id="#FFF1E8" value="#FFF1E8">
-            <label class="color-selector-option" for="#FFF1E8">&nbsp;</label>
-            <br>
-            <input type="radio" name="color" id="#FF004D" value="#FF004D">
-            <label class="color-selector-option" for="#FF004D">&nbsp;</label>
-            <input type="radio" name="color" id="#FFA300" value="#FFA300">
-            <label class="color-selector-option" for="#FFA300">&nbsp;</label>
-            <input type="radio" name="color" id="#FFEC27" value="#FFEC27">
-            <label class="color-selector-option" for="#FFEC27">&nbsp;</label>
-            <input type="radio" name="color" id="#00E436" value="#00E436">
-            <label class="color-selector-option" for="#00E436">&nbsp;</label>
-            <input type="radio" name="color" id="#29ADFF" value="#29ADFF">
-            <label class="color-selector-option" for="#29ADFF">&nbsp;</label>
-            <input type="radio" name="color" id="#83769C" value="#83769C">
-            <label class="color-selector-option" for="#83769C">&nbsp;</label>
-            <input type="radio" name="color" id="#FF77A8" value="#FF77A8">
-            <label class="color-selector-option" for="#FF77A8">&nbsp;</label>
-            <input type="radio" name="color" id="#FFCCAA" value="#FFCCAA">
-            <label class="color-selector-option" for="#FFCCAA">&nbsp;</label>
-        </div>
-        <div id="tool-selector">
-            <input name="size" type="range" min="1" max="100">
-            <br>
-            <!-- <input type="radio" name="tool" id="stroke" value="stroke" checked>
-            <label for="stroke"> Stroke</label>
-            <input type="radio" name="tool" id="fill" value="fill">
-            <label for="fill"> Fill</label> -->
-        </div>
+        {{ drawing_area() }}
         <form action="/new-creature/" method="post">
             <input type="text" placeholder="Name" name="name" id="monster-name" required>
             <input type="hidden" name="section" value="head">
