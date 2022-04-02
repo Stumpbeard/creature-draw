@@ -14,10 +14,16 @@
     <div>
         <h1><a href="/">Creatures</a></h1>
         <h2>{{ creature.name }}</h2>
+        <div>
+            <button id="replay-button">Replay</button>
+        </div>
         <canvas id="drawing-canvas" height="800" width="500"></canvas>
         <span id="head" style="display: none;">{{ head_data }}</span>
         <span id="body" style="display: none;">{{ body_data }}</span>
         <span id="legs" style="display: none;">{{ legs_data }}</span>
+        <span id="head-history" style="display: none;">{{ head_history }}</span>
+        <span id="body-history" style="display: none;">{{ body_history }}</span>
+        <span id="legs-history" style="display: none;">{{ legs_history }}</span>
     </div>
     <script src="/static/finished.js"></script>
 </body>

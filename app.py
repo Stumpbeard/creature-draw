@@ -15,6 +15,7 @@ class Part(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     section = db.Column(db.String)
     image_data = db.Column(db.String)
+    history = db.Column(db.String)
 
 
 class Creature(db.Model):
@@ -69,7 +70,11 @@ def add_part(creature_id, part):
 @app.route("/new-creature/", methods=["POST"])
 def create_new_creature():
     req = request.form
-    new_part = Part(section=req["section"], image_data=json.dumps(req["image"]))
+    new_part = Part(
+        section=req["section"],
+        image_data=json.dumps(req["image"]),
+        history=json.dumps(req["history"]),
+    )
     db.session.add(new_part)
     db.session.flush()
     new_creature = Creature(name=req["name"], head_id=new_part.id)
@@ -82,7 +87,11 @@ def create_new_creature():
 def update_creature():
     req = request.form
     creature = Creature.query.get(req["creature_id"])
-    new_part = Part(section=req["section"], image_data=json.dumps(req["image"]))
+    new_part = Part(
+        section=req["section"],
+        image_data=json.dumps(req["image"]),
+        history=json.dumps(req["history"]),
+    )
     db.session.add(new_part)
     db.session.flush()
     if req["section"] == "body":
@@ -104,4 +113,7 @@ def finished_creature(id):
         head_data=creature.head.image_data,
         body_data=creature.body.image_data,
         legs_data=creature.legs.image_data,
+        head_history=creature.head.history,
+        body_history=creature.body.history,
+        legs_history=creature.legs.history,
     )

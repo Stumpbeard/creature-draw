@@ -6,6 +6,7 @@ const offsetX = canvas.offsetLeft + parseInt(getComputedStyle(canvas).borderWidt
 const offsetY = canvas.offsetTop + parseInt(getComputedStyle(canvas).borderWidth.replace("px", ""))
 
 const imageInput = document.getElementById("image-input")
+const historyInput = document.getElementById("history-input")
 const monsterName = document.getElementById("monster-name")
 
 let mousePos = {
@@ -17,6 +18,7 @@ let mousedown = false
 let lines = []
 let points = []
 let actions = []
+let actionHistory = []
 
 let ctx = canvas.getContext("2d")
 ctx.imageSmoothingEnabled = false
@@ -112,6 +114,7 @@ function draw() {
             ctx.putImageData(imageData, 0, 0);
         }
     });
+    actionHistory = actionHistory.concat(actions)
     actions = []
 
     ctx.strokeStyle = document.querySelector('input[name="color"]:checked').value;
@@ -133,6 +136,7 @@ function draw() {
     const imageData = Array.prototype.slice.call(image.data)
     const imageDataJson = JSON.stringify(imageData)
     imageInput.value = imageDataJson;
+    historyInput.value = JSON.stringify(actionHistory)
 
     ctx = buffer.getContext('2d')
     ctx.imageSmoothingEnabled = false
