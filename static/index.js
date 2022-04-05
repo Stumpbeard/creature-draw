@@ -4,6 +4,7 @@ buffer.width = canvas.width
 buffer.height = canvas.height
 const offsetX = canvas.offsetLeft + parseInt(getComputedStyle(canvas).borderWidth.replace("px", ""))
 const offsetY = canvas.offsetTop + parseInt(getComputedStyle(canvas).borderWidth.replace("px", ""))
+const undoButton = document.getElementById('undo-button')
 
 const imageInput = document.getElementById("image-input")
 const historyInput = document.getElementById("history-input")
@@ -19,8 +20,22 @@ let lines = []
 let points = []
 let actions = []
 let actionHistory = []
+const undoHistory = []
+let undo = false
 
 let ctx = canvas.getContext("2d")
+ctx.imageSmoothingEnabled = false
+ctx.filter = 'url(#remove-alpha)';
+
+const startCanvas = document.createElement('canvas')
+startCanvas.width = canvas.width
+startCanvas.height = canvas.height
+ctx = startCanvas.getContext('2d')
+ctx.imageSmoothingEnabled = false
+ctx.filter = 'url(#remove-alpha)';
+ctx.drawImage(canvas, 0, 0)
+undoHistory.push(startCanvas)
+ctx = canvas.getContext('2d')
 ctx.imageSmoothingEnabled = false
 ctx.filter = 'url(#remove-alpha)';
 
@@ -76,6 +91,23 @@ function draw() {
     ctx.filter = 'url(#remove-alpha)';
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
+    if (undo) {
+        ctx = buffer.getContext('2d')
+        ctx.imageSmoothingEnabled = false
+        ctx.filter = 'url(#remove-alpha)';
+        undoHistory.pop()
+        const topCanvas = undoHistory[undoHistory.length - 1]
+        ctx.clearRect(0, 0, buffer.width, buffer.height)
+        ctx.drawImage(topCanvas, 0, 0)
+        actionHistory.pop()
+        if (undoHistory.length <= 1) {
+            undoButton.setAttribute('disabled', true)
+        }
+        ctx = canvas.getContext("2d")
+        ctx.imageSmoothingEnabled = false
+        ctx.filter = 'url(#remove-alpha)';
+        undo = false
+    }
     ctx.drawImage(buffer, 0, 0)
     if (canvas.innerHTML) {
         const imageData = JSON.parse(canvas.innerHTML.replaceAll('"', ''))
@@ -104,6 +136,18 @@ function draw() {
                 ctx.stroke();
                 ctx.closePath();
             }
+            const newCanvas = document.createElement('canvas')
+            newCanvas.width = canvas.width
+            newCanvas.height = canvas.height
+            ctx = newCanvas.getContext('2d')
+            ctx.imageSmoothingEnabled = false
+            ctx.filter = 'url(#remove-alpha)';
+            ctx.drawImage(canvas, 0, 0)
+            undoHistory.push(newCanvas)
+            undoButton.removeAttribute('disabled')
+            ctx = canvas.getContext('2d')
+            ctx.imageSmoothingEnabled = false
+            ctx.filter = 'url(#remove-alpha)';
         }
         else if (action.action === 'fill') {
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
@@ -175,8 +219,10 @@ document.addEventListener("mouseup", (e) => {
         // mousedown = false
         // if (tool === 'stroke') {
         mousedown = false
-        actions.push({ "action": "stroke", "color": document.querySelector('input[name="color"]:checked').value, "points": points, "size": parseInt(document.querySelector('input[name="size"]:checked').value) })
-        points = []
+        if (points.length > 0) {
+            actions.push({ "action": "stroke", "color": document.querySelector('input[name="color"]:checked').value, "points": points, "size": parseInt(document.querySelector('input[name="size"]:checked').value) })
+            points = []
+        }
         // }
     }
 }, false)
@@ -186,4 +232,8 @@ document.addEventListener("mousemove", (e) => {
         points.push({ x: e.pageX - offsetX, y: e.pageY - offsetY })
     }
     mousePos = { x: e.pageX - offsetX, y: e.pageY - offsetY }
+}, false)
+
+undoButton.addEventListener("click", (e) => {
+    undo = true
 }, false)
