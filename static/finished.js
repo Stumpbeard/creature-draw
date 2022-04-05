@@ -49,6 +49,7 @@ function draw() {
 
     if (actions.length >= 1) {
         const line = actions[0]
+        mostRecentAction = line.part
         ctx.strokeStyle = line.color;
         ctx.lineWidth = parseInt(line.size);
         ctx.lineCap = 'round';
@@ -65,7 +66,7 @@ function draw() {
             line.points.shift()
         }
         if (line.points.length === 0) {
-            mostRecentAction = actions.shift().part
+            actions.shift().part
         }
     }
     if (actions.length === 0) {
@@ -91,6 +92,7 @@ var drawIntervalId = setInterval(draw, 16.6666)
 
 replayButton.addEventListener('click', () => {
     clearInterval(drawIntervalId)
+    mostRecentAction = 'head'
 
     ctx = buffer.getContext('2d')
     ctx.clearRect(0, 0, buffer.width, buffer.height);
