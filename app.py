@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timedelta
 
 from flask import Flask, jsonify, redirect, render_template, request, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -26,6 +27,7 @@ class Creature(db.Model):
     head_id = db.Column(db.Integer, db.ForeignKey("parts.id"), nullable=False)
     body_id = db.Column(db.Integer, db.ForeignKey("parts.id"))
     legs_id = db.Column(db.Integer, db.ForeignKey("parts.id"))
+    last_claimed = db.Column(db.DateTime)
 
     head = db.relationship("Part", backref="creatures_head", foreign_keys=[head_id])
     body = db.relationship("Part", backref="creatures_body", foreign_keys=[body_id])
@@ -37,7 +39,12 @@ db.create_all()
 
 @app.route("/")
 def home():
-    creatures = Creature.query.all()
+    ten_minutes_ago = datetime.utcnow() - timedelta(minutes=10)
+    creatures = Creature.query.filter(
+        (Creature.last_claimed < ten_minutes_ago)
+        | (Creature.last_claimed == None)
+        | (Creature.legs_id != None)
+    ).all()
 
     return render_template(
         "index.html",
@@ -87,6 +94,7 @@ def create_new_creature():
 def update_creature():
     req = request.form
     creature = Creature.query.get(req["creature_id"])
+    creature.last_claimed = None
     new_part = Part(
         section=req["section"],
         image_data=json.dumps(req["image"]),
@@ -117,3 +125,13 @@ def finished_creature(id):
         body_history=creature.body.history,
         legs_history=creature.legs.history,
     )
+
+
+@app.route("/claim-creature/<id>/")
+def claim_creature(id):
+    creature = Creature.query.get(id)
+    if not creature:
+        return "no creature found"
+    creature.last_claimed = datetime.utcnow()
+    db.session.commit()
+    return "success"

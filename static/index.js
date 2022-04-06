@@ -5,6 +5,7 @@ buffer.height = canvas.height
 const offsetX = canvas.offsetLeft + parseInt(getComputedStyle(canvas).borderWidth.replace("px", ""))
 const offsetY = canvas.offsetTop + parseInt(getComputedStyle(canvas).borderWidth.replace("px", ""))
 const undoButton = document.getElementById('undo-button')
+const claimButton = document.getElementById('claim-button')
 
 const imageInput = document.getElementById("image-input")
 const historyInput = document.getElementById("history-input")
@@ -22,10 +23,25 @@ let actions = []
 let actionHistory = []
 const undoHistory = []
 let undo = false
+let claimed = claimButton.hidden || claimButton.disabled
 
 let ctx = canvas.getContext("2d")
 ctx.imageSmoothingEnabled = false
 ctx.filter = 'url(#remove-alpha)';
+if (canvas.innerHTML) {
+    const imageData = JSON.parse(canvas.innerHTML.replaceAll('"', ''))
+    canvas.innerHTML = ''
+    const arr = new Uint8ClampedArray(600000)
+    for (let i = 0; i < arr.length; ++i) {
+        arr[i] = imageData[i]
+    }
+    const newImageData = new ImageData(arr, canvas.width)
+    ctx.putImageData(newImageData, 0, 0 - canvas.height + 50)
+    ctx = buffer.getContext('2d')
+    ctx.imageSmoothingEnabled = false
+    ctx.filter = 'url(#remove-alpha)';
+    ctx.drawImage(canvas, 0, 0)
+}
 
 const startCanvas = document.createElement('canvas')
 startCanvas.width = canvas.width
@@ -109,16 +125,6 @@ function draw() {
         undo = false
     }
     ctx.drawImage(buffer, 0, 0)
-    if (canvas.innerHTML) {
-        const imageData = JSON.parse(canvas.innerHTML.replaceAll('"', ''))
-        canvas.innerHTML = ''
-        const arr = new Uint8ClampedArray(600000)
-        for (let i = 0; i < arr.length; ++i) {
-            arr[i] = imageData[i]
-        }
-        const newImageData = new ImageData(arr, canvas.width)
-        ctx.putImageData(newImageData, 0, 0 - canvas.height + 50)
-    }
     actions.forEach(action => {
         if (action.action === 'stroke') {
             const line = action
@@ -190,50 +196,69 @@ function draw() {
     ctx = canvas.getContext("2d")
     ctx.imageSmoothingEnabled = false
     ctx.filter = 'url(#remove-alpha)';
-    ctx.beginPath()
-    ctx.fillStyle = document.querySelector('input[name="color"]:checked').value;
-    ctx.arc(mousePos.x, mousePos.y, parseInt(document.querySelector('input[name="size"]:checked').value) / 2, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.closePath()
+    if (claimed) {
+        ctx.beginPath()
+        ctx.fillStyle = document.querySelector('input[name="color"]:checked').value;
+        ctx.arc(mousePos.x, mousePos.y, parseInt(document.querySelector('input[name="size"]:checked').value) / 2, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.closePath()
+    }
 }
 
 setInterval(draw, 16.6666)
 
 
 canvas.addEventListener("mousedown", (e) => {
-    if (e.button === 0) {
-        // const tool = document.querySelector('input[name="tool"]:checked').value | 'stroke'
-        // if (tool === 'stroke') {
-        mousedown = true
-        points.push({ x: e.pageX - offsetX, y: e.pageY - offsetY })
-        points.push({ x: e.pageX - offsetX + 1, y: e.pageY - offsetY + 1 })
-        // } else if (tool === 'fill') {
-        // actions.push({ "action": "fill", "x": e.pageX - offsetX, "y": e.pageY - offsetY, "color": hexToRgb(document.querySelector('input[name="color"]:checked').value) })
-        // }
+    if (claimed) {
+        if (e.button === 0) {
+            // const tool = document.querySelector('input[name="tool"]:checked').value | 'stroke'
+            // if (tool === 'stroke') {
+            mousedown = true
+            points.push({ x: e.pageX - offsetX, y: e.pageY - offsetY })
+            points.push({ x: e.pageX - offsetX + 1, y: e.pageY - offsetY + 1 })
+            // } else if (tool === 'fill') {
+            // actions.push({ "action": "fill", "x": e.pageX - offsetX, "y": e.pageY - offsetY, "color": hexToRgb(document.querySelector('input[name="color"]:checked').value) })
+            // }
+        }
     }
 }, false)
 
 document.addEventListener("mouseup", (e) => {
-    if (e.button === 0) {
-        // const tool = document.querySelector('input[name="tool"]:checked').value | 'stroke'
-        // mousedown = false
-        // if (tool === 'stroke') {
-        mousedown = false
-        if (points.length > 0) {
-            actions.push({ "action": "stroke", "color": document.querySelector('input[name="color"]:checked').value, "points": points, "size": parseInt(document.querySelector('input[name="size"]:checked').value) })
-            points = []
+    if (claimed) {
+        if (e.button === 0) {
+            // const tool = document.querySelector('input[name="tool"]:checked').value | 'stroke'
+            // mousedown = false
+            // if (tool === 'stroke') {
+            mousedown = false
+            if (points.length > 0) {
+                actions.push({ "action": "stroke", "color": document.querySelector('input[name="color"]:checked').value, "points": points, "size": parseInt(document.querySelector('input[name="size"]:checked').value) })
+                points = []
+            }
+            // }
         }
-        // }
     }
 }, false)
 
 document.addEventListener("mousemove", (e) => {
-    if (mousedown) {
-        points.push({ x: e.pageX - offsetX, y: e.pageY - offsetY })
+    if (claimed) {
+        if (mousedown) {
+            points.push({ x: e.pageX - offsetX, y: e.pageY - offsetY })
+        }
+        mousePos = { x: e.pageX - offsetX, y: e.pageY - offsetY }
     }
-    mousePos = { x: e.pageX - offsetX, y: e.pageY - offsetY }
 }, false)
 
 undoButton.addEventListener("click", (e) => {
     undo = true
+}, false)
+
+claimButton.addEventListener("click", (e) => {
+    claimed = true
+    claimButton.disabled = true
+    document.getElementById('tool-selector').hidden = false
+    document.getElementById('color-selector').hidden = false
+    const re = /\d+/g
+    const matches = window.location.href.match(re)
+    const creatureId = matches[matches.length - 1]
+    fetch(`/claim-creature/${creatureId}`)
 }, false)
