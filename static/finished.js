@@ -6,6 +6,7 @@ const headHistory = document.getElementById('head-history').innerHTML.replaceAll
 const bodyHistory = document.getElementById('body-history').innerHTML.replaceAll('\\"', "'").replaceAll('"', '').replaceAll("'", '"')
 const legsHistory = document.getElementById('legs-history').innerHTML.replaceAll('\\"', "'").replaceAll('"', '').replaceAll("'", '"')
 const replayButton = document.getElementById("replay-button")
+const finishedButton = document.getElementById("finished-button")
 
 const buffer = document.createElement('canvas')
 buffer.width = canvas.width
@@ -180,3 +181,33 @@ if (legsHistory == 'None') {
     let newImageData = new ImageData(arr, canvas.width)
     ctx.putImageData(newImageData, 0, 500)
 }
+
+finishedButton.addEventListener('click', (e) => {
+    clearInterval(drawIntervalId)
+    ctx = canvas.getContext('2d')
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    let imageData = JSON.parse(headData.innerHTML.replaceAll('"', ''))
+    let arr = new Uint8ClampedArray(600000)
+    for (let i = 0; i < arr.length; ++i) {
+        arr[i] = imageData[i]
+    }
+    let newImageData = new ImageData(arr, canvas.width)
+    ctx.putImageData(newImageData, 0, 0)
+
+    imageData = JSON.parse(bodyData.innerHTML.replaceAll('"', ''))
+    arr = new Uint8ClampedArray(600000)
+    for (let i = 0; i < arr.length; ++i) {
+        arr[i] = imageData[i]
+    }
+    newImageData = new ImageData(arr, canvas.width)
+    ctx.putImageData(newImageData, 0, 250)
+
+    imageData = JSON.parse(legsData.innerHTML.replaceAll('"', ''))
+    arr = new Uint8ClampedArray(600000)
+    for (let i = 0; i < arr.length; ++i) {
+        arr[i] = imageData[i]
+    }
+    newImageData = new ImageData(arr, canvas.width)
+    ctx.putImageData(newImageData, 0, 500)
+}, false)
