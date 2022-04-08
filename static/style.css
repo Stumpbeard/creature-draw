@@ -33,6 +33,7 @@ canvas {
     border: 4px black solid;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    touch-action: none;
 }
 
 /* div {
@@ -51,6 +52,10 @@ canvas {
 
 .hidden-radio {
     display: none;
+}
+
+#color-selector {
+    max-width: 516px;
 }
 
 .color-selector-option {
@@ -74,7 +79,7 @@ canvas {
     background-color: #000000;
 }
 
-.hidden-radio:checked + label {
+.hidden-radio:checked+label {
     box-shadow: 0px 0px 0px 4px #FF77A8;
 }
 

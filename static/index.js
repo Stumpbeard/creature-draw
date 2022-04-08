@@ -2,8 +2,8 @@ const canvas = document.getElementById("drawing-canvas")
 const buffer = document.createElement('canvas')
 buffer.width = canvas.width
 buffer.height = canvas.height
-const offsetX = canvas.offsetLeft + parseInt(getComputedStyle(canvas).borderWidth.replace("px", ""))
-const offsetY = canvas.offsetTop + parseInt(getComputedStyle(canvas).borderWidth.replace("px", ""))
+let offsetX = canvas.offsetLeft + parseInt(getComputedStyle(canvas).borderWidth.replace("px", ""))
+let offsetY = canvas.offsetTop + parseInt(getComputedStyle(canvas).borderWidth.replace("px", ""))
 const undoButton = document.getElementById('undo-button')
 const claimButton = document.getElementById('claim-button')
 
@@ -102,6 +102,8 @@ const fill = (data, x, y, oldColor, newColor) => {
 }
 
 function draw() {
+    offsetX = canvas.offsetLeft + parseInt(getComputedStyle(canvas).borderWidth.replace("px", ""))
+    offsetY = canvas.offsetTop + parseInt(getComputedStyle(canvas).borderWidth.replace("px", ""))
     ctx = canvas.getContext("2d")
     ctx.imageSmoothingEnabled = false
     ctx.filter = 'url(#remove-alpha)';
@@ -223,6 +225,20 @@ canvas.addEventListener("mousedown", (e) => {
     }
 }, false)
 
+canvas.addEventListener("touchstart", (e) => {
+    if (claimed) {
+        // const tool = document.querySelector('input[name="tool"]:checked').value | 'stroke'
+        // if (tool === 'stroke') {
+        mousedown = true
+        points.push({ x: e.touches[0].pageX - offsetX, y: e.touches[0].pageY - offsetY })
+        points.push({ x: e.touches[0].pageX - offsetX + 1, y: e.touches[0].pageY - offsetY + 1 })
+        // } else if (tool === 'fill') {
+        // actions.push({ "action": "fill", "x": e.pageX - offsetX, "y": e.pageY - offsetY, "color": hexToRgb(document.querySelector('input[name="color"]:checked').value) })
+        // }
+    }
+}, false)
+
+
 document.addEventListener("mouseup", (e) => {
     if (claimed) {
         if (e.button === 0) {
@@ -239,6 +255,20 @@ document.addEventListener("mouseup", (e) => {
     }
 }, false)
 
+document.addEventListener("touchend", (e) => {
+    if (claimed) {
+        // const tool = document.querySelector('input[name="tool"]:checked').value | 'stroke'
+        // mousedown = false
+        // if (tool === 'stroke') {
+        mousedown = false
+        if (points.length > 0) {
+            actions.push({ "action": "stroke", "color": document.querySelector('input[name="color"]:checked').value, "points": points, "size": parseInt(document.querySelector('input[name="size"]:checked').value) })
+            points = []
+        }
+        // }
+    }
+}, false)
+
 document.addEventListener("mousemove", (e) => {
     if (claimed) {
         if (mousedown) {
@@ -247,6 +277,15 @@ document.addEventListener("mousemove", (e) => {
         mousePos = { x: e.pageX - offsetX, y: e.pageY - offsetY }
     }
 }, false)
+
+document.addEventListener("touchmove", (e) => {
+    if (claimed) {
+        if (mousedown) {
+            points.push({ x: e.touches[0].pageX - offsetX, y: e.touches[0].pageY - offsetY })
+        }
+    }
+}, false)
+
 
 undoButton.addEventListener("click", (e) => {
     undo = true
