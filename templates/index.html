@@ -34,21 +34,21 @@
             <input type="text" maxlength="20" name="author" id="author" placeholder="(Optional) Author">
             <input type="submit" id="done-button" value="Done">
         </form>
-        <h2>Needs body</h2>
+        <h2>Needs body ({{ needing_bodies|length }})</h2>
         <ul>
             {% for creature in needing_bodies %}
             <li><a href="{{ url_for('add_part', creature_id=creature.id, part='body') }}">{{ creature.name }}</a>
             </li>
             {% endfor %}
         </ul>
-        <h2>Needs legs</h2>
+        <h2>Needs legs ({{ needing_legs|length }})</h2>
         <ul>
             {% for creature in needing_legs %}
             <li><a href="{{ url_for('add_part', creature_id=creature.id, part='legs') }}">{{ creature.name }}</a>
             </li>
             {% endfor %}
         </ul>
-        <h2>Finished</h2>
+        <h2>Finished ({{ finished_creatures|length }})</h2>
         <ul>
             {% for creature in finished_creatures %}
             <li><a href="{{ url_for('finished_creature', id=creature.id) }}">{{ creature.name }}</a></li>

@@ -48,6 +48,10 @@ def home():
         | (Creature.legs_id != None)
     ).all()
 
+    finished_creatures = [
+        creature for creature in creatures if creature.legs is not None
+    ]
+    finished_creatures.reverse()
     return render_template(
         "index.html",
         needing_bodies=[creature for creature in creatures if creature.body is None],
@@ -56,9 +60,7 @@ def home():
             for creature in creatures
             if creature.body is not None and creature.legs is None
         ],
-        finished_creatures=[
-            creature for creature in creatures if creature.legs is not None
-        ],
+        finished_creatures=finished_creatures,
     )
 
 
