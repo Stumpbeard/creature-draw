@@ -25,6 +25,24 @@
         <span id="head-history" style="display: none;">{{ head_history }}</span>
         <span id="body-history" style="display: none;">{{ body_history }}</span>
         <span id="legs-history" style="display: none;">{{ legs_history }}</span>
+        <h2>Authors:</h2>
+        <p>
+            {% if authors[0] is not none %}
+            Head: <a href="/author/{{ authors[0] }}"><em>{{ authors[0] }}</em></a> <br>
+            {% else %}
+            Head: <em>anonymous</em> <br>
+            {% endif %}
+            {% if authors[1] is not none %}
+            Body: <a href="/author/{{ authors[1] }}"><em>{{ authors[1] }}</em></a> <br>
+            {% else %}
+            Body: <em>anonymous</em> <br>
+            {% endif %}
+            {% if authors[2] is not none %}
+            Legs: <a href="/author/{{ authors[2] }}/"><em>{{ authors[2] }}</em></a> <br>
+            {% else %}
+            Legs: <em>anonymous</em> <br>
+            {% endif %}
+        </p>
     </div>
     <script src="/static/finished.js"></script>
 </body>

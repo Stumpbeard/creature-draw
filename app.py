@@ -1,5 +1,6 @@
 import json
 from datetime import datetime, timedelta
+import re
 
 from flask import Flask, jsonify, redirect, render_template, request, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -17,6 +18,7 @@ class Part(db.Model):
     section = db.Column(db.String)
     image_data = db.Column(db.String)
     history = db.Column(db.String)
+    author = db.Column(db.String)
 
 
 class Creature(db.Model):
@@ -77,10 +79,16 @@ def add_part(creature_id, part):
 @app.route("/new-creature/", methods=["POST"])
 def create_new_creature():
     req = request.form
+    author = req.get("author")
+    if author:
+        author = re.sub("[^-_.a-zA-Z0-9]", "", author)
+    else:
+        author = None
     new_part = Part(
         section=req["section"],
         image_data=json.dumps(req["image"]),
         history=json.dumps(req["history"]),
+        author=author,
     )
     db.session.add(new_part)
     db.session.flush()
@@ -95,10 +103,16 @@ def update_creature():
     req = request.form
     creature = Creature.query.get(req["creature_id"])
     creature.last_claimed = None
+    author = req.get("author")
+    if author:
+        author = re.sub("[^-_.a-zA-Z0-9]", "", author)
+    else:
+        author = None
     new_part = Part(
         section=req["section"],
         image_data=json.dumps(req["image"]),
         history=json.dumps(req["history"]),
+        author=author,
     )
     db.session.add(new_part)
     db.session.flush()
@@ -111,7 +125,7 @@ def update_creature():
     return redirect(url_for("home"))
 
 
-@app.route("/finished/<id>")
+@app.route("/finished/<id>/")
 def finished_creature(id):
     creature = Creature.query.get(id)
 
@@ -124,6 +138,7 @@ def finished_creature(id):
         head_history=creature.head.history,
         body_history=creature.body.history,
         legs_history=creature.legs.history,
+        authors=[creature.head.author, creature.body.author, creature.legs.author],
     )
 
 
@@ -135,3 +150,39 @@ def claim_creature(id):
     creature.last_claimed = datetime.utcnow()
     db.session.commit()
     return "success"
+
+
+@app.route("/author/<author>/")
+def get_author_works(author):
+    parts = Part.query.filter(Part.author.ilike(author)).all()
+    contributions = []
+    for part in parts:
+        if part.creatures_head:
+            creature = part.creatures_head[0]
+            contributions.append(
+                {
+                    "part": "Head",
+                    "creature_name": creature.name,
+                    "creature_id": creature.id,
+                }
+            )
+        if part.creatures_body:
+            creature = part.creatures_body[0]
+            contributions.append(
+                {
+                    "part": "Body",
+                    "creature_name": creature.name,
+                    "creature_id": creature.id,
+                }
+            )
+        if part.creatures_legs:
+            creature = part.creatures_legs[0]
+            contributions.append(
+                {
+                    "part": "Legs",
+                    "creature_name": creature.name,
+                    "creature_id": creature.id,
+                }
+            )
+
+    return render_template("author.html", author=author, contributions=contributions)

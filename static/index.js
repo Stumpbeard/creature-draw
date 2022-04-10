@@ -6,6 +6,7 @@ let offsetX = canvas.offsetLeft + parseInt(getComputedStyle(canvas).borderWidth.
 let offsetY = canvas.offsetTop + parseInt(getComputedStyle(canvas).borderWidth.replace("px", ""))
 const undoButton = document.getElementById('undo-button')
 const claimButton = document.getElementById('claim-button')
+const doneButton = document.getElementById('done-button')
 
 const imageInput = document.getElementById("image-input")
 const historyInput = document.getElementById("history-input")
@@ -300,4 +301,5 @@ claimButton.addEventListener("click", (e) => {
     const matches = window.location.href.match(re)
     const creatureId = matches[matches.length - 1]
     fetch(`/claim-creature/${creatureId}`)
+    doneButton.disabled = false
 }, false)

@@ -21,6 +21,7 @@
         <p>
             Continue their creature, and make sure to draw past the arrow.
         </p>
+        <h2>Drawing {{ part }}</h2>
         {{ drawing_area(part_data) }}
         <form action="/update-creature/" method="post">
             <input type="text" placeholder="Name" name="name" id="monster-name" value="{{ creature.name }}" required
@@ -29,7 +30,8 @@
             <input type="hidden" name="creature_id" value="{{ creature.id }}">
             <input type="hidden" name="image" id="image-input">
             <input type="hidden" name="history" id="history-input">
-            <input type="submit" id="done-button" value="Done">
+            <input type="text" maxlength="20" name="author" id="author" placeholder="(Optional) Author">
+            <input type="submit" id="done-button" value="Done" disabled>
         </form>
     </div>
     <script src="/static/index.js"></script>
